@@ -51,6 +51,7 @@ def settingFormatMail(formatMail, recipient):
     return message
 
 # **PROGRAM**
+
 formatMail = loadFileJSON("format.json")
 contacs = loadFileJSON("contats.json")
 # go here to create a password: https://myaccount.google.com/security?rapt=AEjHL4MbGEoWlakBM55Kv8XTcOfZgPpiF0sn6LbXOMjRPYj9pFnk5933vhH9gJGVxa0BcDmwzu1WkRwGq5kwX7oUVX-KqCwEbg
