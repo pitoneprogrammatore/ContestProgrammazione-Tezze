@@ -1,14 +1,7 @@
 [
-    {"Mail": "MailReciever@gmail.com","Attached": "ciao.jpg"},
-    {"Mail": "MailReciever@gmail.com","Attached": "ciao.jpg"},
-    {"Mail": "MailReciever@gmail.com","Attached": "ciao.jpg"},
-    {"Mail": "MailReciever@gmail.com","Attached": "ciao.jpg"},
-    {"Mail": "MailReciever@gmail.com","Attached": "ciao.jpg"},
-    {"Mail": "MailReciever@gmail.com","Attached": "ciao.jpg"},
-    {"Mail": "MailReciever@gmail.com","Attached": "ciao.jpg"},
-    {"Mail": "MailReciever@gmail.com","Attached": "ciao.jpg"},
-    {"Mail": "MailReciever@gmail.com","Attached": "ciao.jpg"},
-    {"Mail": "MailReciever@gmail.com","Attached": "ciao.jpg"},
-    {"Mail": "MailReciever@gmail.com","Attached": "ciao.jpg"},
-    {"Mail": "MailReciever@gmail.com","Attached": "ciao.jpg"}
+    {"Mail": "recieverEmail", "Attached": "ciao.jpg", "nome": "Aurora",  "numero": "33333333"},
+    {"Mail": "recieverEmail","Attached": "Musica.mp3",  "nome": "Carlo", "numero": "11111111"},
+    {"Mail": "recieverEmail","nome": "Prova",  "numero": "22222222"},
+    {"Mail": "recieverEmail", "Attached": "zip_10MB.zip", "nome": "Franco", "numero": "4444444"},
+    {"Mail": "recieverEmail", "Attached": "test.pdf", "nome": "Francesca", "numero": "55555"}
 ]

@@ -1,5 +1,5 @@
 {
-    "From": "MailSender@gmail.com",
-    "Subject": "Cose importanti!!!!",
-    "Message": "Ciao mio bel bambino "
+    "From":"senderEmail",
+    "Subject":"Prova Email!!!!",
+    "Message":"Ciao /*<nome>*/,\nQuesta è una prova, devi mandare un messaggio al nunero /*<numero>*/. \nBuona giornata /*<nome>*/ \n PIPPO"
 }

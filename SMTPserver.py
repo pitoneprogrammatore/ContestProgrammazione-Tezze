@@ -1,55 +1,67 @@
-import email, smtplib, ssl, json
+import email, smtplib, ssl, json, re, email, email.mime.base, email.mime.multipart,email.mime.text
 
-from email import encoders
-from email.mime.base import MIMEBase
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+# function to open file json and return data
+def loadFileJSON (file): 
+    with open(file, mode='r', encoding='utf-8') as json_file:
+        data = json.load(json_file)
+        return data
 
-def getContacs(file):
-    with open(file, mode='r', encoding='utf-8') as contacts_file:
-        contacts = json.load(contacts_file)
-        return contacts
-def getMailFormat(file):
-    with open(file, mode='r', encoding='utf-8') as mailFormat_file:
-        formatMail = json.load(mailFormat_file)
-        return formatMail
-def loadPdf(reciver, message):
-    # Open PDF file in binary mode
-    filename = reciver["Attached"]
-    with open(pdfDir+filename, "rb") as attachment:
-        # Add file as application/octet-stream
-        # Email client can usually download this automatically as attachment
-        part2 = MIMEBase("application", "octet-stream")
-        part2.set_payload(attachment.read())
-    # Encode file in ASCII characters to send by email    
-    encoders.encode_base64(part2)
-    # Add header as key/value pair to attachment part
-    part2.add_header(
-        "Content-Disposition",
-        f"attachment; filename= {filename}",
-    )
-    message.attach(part2)
-    return message
-def settingFormatMail(formatMail, reciver):
-    # Create a multipart message and set headers
-    message = MIMEMultipart()
-    message["From"] = formatMail["From"]
-    message["To"] = reciver["Mail"]
-    message["Subject"] = formatMail["Subject"]
-    # Add body to email
-    message.attach(MIMEText(formatMail["Message"], "plain"))
-    message = loadPdf(reciver, message)
+# function to resolve every tag in the message and return a list of tags eventually unresolved and the message with resolved tags (if only they can be resolved)
+def resolvePersonalTag(message, recipient):
+    copyMessage = message;
+    matches = re.findall("\/\*<(\w+)>\*\/", copyMessage, re.MULTILINE)
+    matches = list(dict.fromkeys(matches)) # removing duplicates
+    for tag in matches:
+        if tag in recipient:
+            copyMessage = re.sub('\/\*<'+ tag +'>\*\/', recipient[tag], copyMessage)
+    tagsUnresolved = re.findall("\/\*<(\w+)>\*\/", copyMessage, re.MULTILINE) #research eventually tags unresolved
+    return tagsUnresolved, copyMessage
+
+# function to load File in the message, if File is not in ·/Attached directory it returns -1 else it returns message with attachment
+def loadFile(recipient, message):
+    # Open File file in binary mode
+    try:
+        with open("./Attached/"+recipient["Attached"], "rb") as attachment:
+            # Add file as application/octet-stream
+            part2 = email.mime.base.MIMEBase("application", "octet-stream")
+            part2.set_payload(attachment.read())
+        # Encode file in ASCII characters to send by email    
+        email.encoders.encode_base64(part2)
+        # Add header for the attachment
+        part2.add_header("Content-Disposition", f"attachment; filename= "+recipient["Attached"])
+        message.attach(part2)
+    except FileNotFoundError:
+        message = None
     return message
 
-formatMail = getMailFormat("format.json")
-contacs = getContacs("contats.json")
-password = 'password generate from google'
-pdfDir= "./Attached/"
+# function to formatting email and prepare that to send it        
+def settingFormatMail(formatMail, recipient):
+    # mail needs headers which are usefull to store information like sender, recipient and body (attachments and so on)
+    # **Setting headers, body and attachment for the email**
+    message = None
+    tagsUnresolved, messageBody = resolvePersonalTag(formatMail["Message"], recipient)
+    if tagsUnresolved == []:
+        message = email.mime.multipart.MIMEMultipart()
+        message["From"] = formatMail["From"]
+        message["To"] = recipient["Mail"]
+        message["Subject"] = formatMail["Subject"]
+        message.attach(email.mime.text.MIMEText(messageBody, "plain")) # adding text into the body
+        if "Attached" in recipient:
+            message = loadFile(recipient, message) # adding file into the body
+    return message
 
-context = ssl.create_default_context()
-with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-    server.login(formatMail["From"], password)
-
+formatMail = loadFileJSON("format.json")
+contacs = loadFileJSON("contats.json")
+# go here to create a password: https://myaccount.google.com/security?rapt=AEjHL4MbGEoWlakBM55Kv8XTcOfZgPpiF0sn6LbXOMjRPYj9pFnk5933vhH9gJGVxa0BcDmwzu1WkRwGq5kwX7oUVX-KqCwEbg
+# external app password is required to access to the sender account
+password = 'password da genereare https://myaccount.google.com/security?rapt=AEjHL4MbGEoWlakBM55Kv8XTcOfZgPpiF0sn6LbXOMjRPYj9pFnk5933vhH9gJGVxa0BcDmwzu1WkRwGq5kwX7oUVX-KqCwEbg' 
+context = ssl.create_default_context() # creation of ssl certificate whithout this we can't connect to google
+with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as SMTPserver:
+    SMTPserver.login(formatMail["From"], password) # connection to google
     for contact in contacs:
-        message = settingFormatMail(formatMail, contact)
-        server.sendmail(formatMail["From"] , contact["Mail"], message.as_string())
+        message = settingFormatMail(formatMail, contact) # getting the format of mail and all contacts and prepare the mail to send
+        if message is None:
+            print("**Error** To " + contact["Mail"] + " is not sent")
+        else :
+            SMTPserver.sendmail(formatMail["From"] , contact["Mail"], message.as_string()) # send email 
+            print("To " + contact["Mail"] + " is sent successfuly") 
