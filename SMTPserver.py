@@ -9,11 +9,11 @@ def loadFileJSON (file):
 # function to resolve every tag in the message and return a list of tags eventually unresolved and the message with resolved tags (if only they can be resolved)
 def resolvePersonalTag(message, recipient):
     copyMessage = message;
-    matches = re.findall("\/\*<(\w+)>\*\/", copyMessage, re.MULTILINE)
+    matches = re.findall("\/\*<(\w+)>\*\/", copyMessage, re.MULTILINE) # find all tags in message
     matches = list(dict.fromkeys(matches)) # removing duplicates
     for tag in matches:
         if tag in recipient:
-            copyMessage = re.sub('\/\*<'+ tag +'>\*\/', recipient[tag], copyMessage)
+            copyMessage = re.sub('\/\*<'+ tag +'>\*\/', recipient[tag], copyMessage) # resolve tags
     tagsUnresolved = re.findall("\/\*<(\w+)>\*\/", copyMessage, re.MULTILINE) #research eventually tags unresolved
     return tagsUnresolved, copyMessage
 
