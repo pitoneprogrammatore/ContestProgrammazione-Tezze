@@ -6,7 +6,7 @@ def loadFileJSON (file):
         data = json.load(json_file)
         return data
 
-# function to resolve every tag in the message and return a list of tags eventually unresolved and the message with resolved tags (if only they can be resolved)
+# function to resolve every tag in the message, return a list of tags eventually unresolved and the message with resolved tags (if only they can be resolved)
 def resolvePersonalTag(message, recipient):
     copyMessage = message;
     matches = re.findall("\/\*<(\w+)>\*\/", copyMessage, re.MULTILINE) # find all tags in message
@@ -17,9 +17,9 @@ def resolvePersonalTag(message, recipient):
     tagsUnresolved = re.findall("\/\*<(\w+)>\*\/", copyMessage, re.MULTILINE) #research eventually tags unresolved
     return tagsUnresolved, copyMessage
 
-# function to load File in the message, if File is not in ·/Attached directory it returns -1 else it returns message with attachment
+# function to load file in the message, if file is not in ·/Attached directory it returns -1 else it returns message with attachment
 def loadFile(recipient, message):
-    # Open File file in binary mode
+    # Open file in binary mode
     try:
         with open("./Attached/"+recipient["Attached"], "rb") as attachment:
             # Add file as application/octet-stream
@@ -34,9 +34,9 @@ def loadFile(recipient, message):
         message = None
     return message
 
-# function to formatting email and prepare that to send it        
+# function to formatting email and prepare to send it        
 def settingFormatMail(formatMail, recipient):
-    # mail needs headers which are usefull to store information like sender, recipient and body (attachments and so on)
+    # mail needs headers which are useful to store information for sender, recipient and body (attachments and so on)
     # **Setting headers, body and attachment for the email**
     message = None
     tagsUnresolved, messageBody = resolvePersonalTag(formatMail["Message"], recipient)
@@ -50,6 +50,7 @@ def settingFormatMail(formatMail, recipient):
             message = loadFile(recipient, message) # adding file into the body
     return message
 
+# **PROGRAM**
 formatMail = loadFileJSON("format.json")
 contacs = loadFileJSON("contats.json")
 # go here to create a password: https://myaccount.google.com/security?rapt=AEjHL4MbGEoWlakBM55Kv8XTcOfZgPpiF0sn6LbXOMjRPYj9pFnk5933vhH9gJGVxa0BcDmwzu1WkRwGq5kwX7oUVX-KqCwEbg
