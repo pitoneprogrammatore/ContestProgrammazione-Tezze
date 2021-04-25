@@ -46,4 +46,4 @@ Il file è organizzato come un array di email, per ognuna si specifica l'email d
     {"Mail": "mario.rossi@gmail.com", "Attached": "ciao.jpg", "nome": "Mario",  "numero": "33333333"}
 ]
 ```
-Questo specifica un email da inviare a mario.rossi@gmail.com, con l'allegato ciao.jpg, i tag /*<nome>*/ e /*<numero>*/ verranno sostituiti con Mario e 33333333. Ricorda che il campo *Attached* può essere omesso, se manca una definizione di un tag allora l'email non verrà inviata.
+Questo specifica un email da inviare a mario.rossi@gmail.com, con l'allegato ciao.jpg, i tag `/*<nome>*/` e `/*<numero>*/` verranno sostituiti con Mario e 33333333. Ricorda che il campo *Attached* può essere omesso, se manca una definizione di un tag allora l'email non verrà inviata.
