@@ -17,17 +17,17 @@ def resolvePersonalTag(message, recipient):
     tagsUnresolved = re.findall("\/\*<(\w+)>\*\/", copyMessage, re.MULTILINE) #research eventually tags unresolved
     return tagsUnresolved, copyMessage
 
-# function to load file in the message, if file is not in ·/Attached directory it returns -1 else it returns message with attachment
+# function to load file in the message, if file is not in ·/Attached directory it returns -1 else it returns message with attached
 def loadFile(recipient, message):
     # Open file in binary mode
     try:
-        with open("./Attached/"+recipient["Attached"], "rb") as attachment:
+        with open("./Attached/"+recipient["Attached"], "rb") as attached:
             # Add file as application/octet-stream
             part2 = email.mime.base.MIMEBase("application", "octet-stream")
-            part2.set_payload(attachment.read())
+            part2.set_payload(attached.read())
         # Encode file in ASCII characters to send by email    
         email.encoders.encode_base64(part2)
-        # Add header for the attachment
+        # Add header for the attached
         part2.add_header("Content-Disposition", f"attachment; filename= "+recipient["Attached"])
         message.attach(part2)
     except FileNotFoundError:
@@ -36,8 +36,8 @@ def loadFile(recipient, message):
 
 # function to formatting email and prepare to send it        
 def settingFormatMail(formatMail, recipient):
-    # mail needs headers which are useful to store information for sender, recipient and body (attachments and so on)
-    # **Setting headers, body and attachment for the email**
+    # mail needs headers which are useful to store information for sender, recipient and body (attached and so on)
+    # **Setting headers, body and attached for the email**
     message = None
     tagsUnresolved, messageBody = resolvePersonalTag(formatMail["Message"], recipient)
     if tagsUnresolved == []:
